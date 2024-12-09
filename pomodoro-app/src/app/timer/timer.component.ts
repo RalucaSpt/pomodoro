@@ -1,41 +1,33 @@
-import { Component } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
+import { TimerService } from './timer-service/timer-service.component';
 import { DecimalPipe } from '@angular/common';
 
 @Component({
   selector: 'app-timer',
+  standalone: true,
   imports: [DecimalPipe],
   templateUrl: './timer.component.html',
-  styleUrl: './timer.component.css',
+  styleUrls: ['./timer.component.css']
 })
 export class TimerComponent {
-  timeLeft: number = 25 * 60;
-  minutes: number = this.timeLeft / 60;
-  seconds: number = this.timeLeft % 60;
+  private timerService = inject(TimerService);
 
-  private intervalId: any;
-  private isRunning: boolean = false;
+  minutes = this.timerService.minutes;
+  seconds = this.timerService.seconds;
 
-  startTimer() {
-    if (this.isRunning) return;
-    this.isRunning = true;
-    this.intervalId = setInterval(() => {
-      this.seconds -= 1;
-      if (this.seconds <= 0) {
-        this.seconds = 59;
-        this.minutes--;
-      }
-    }, 1000);
+  startTimer(): void {
+    this.timerService.startTimer();
   }
 
-  stopTimer() {
-    clearInterval(this.intervalId);
-    this.isRunning = false;
+  stopTimer(): void {
+    this.timerService.stopTimer();
   }
 
-  resetTimer() {
-    this.stopTimer();
-    this.timeLeft = 25 * 60;
-    this.minutes = this.timeLeft / 60;
-    this.seconds = this.timeLeft % 60
+  resetTimer(): void {
+    this.timerService.resetTimer();
+  }
+
+  isRunning(): boolean {
+    return this.timerService.isTimerRunning();
   }
 }
