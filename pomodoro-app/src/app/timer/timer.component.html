@@ -1,0 +1,12 @@
+<div class="timer-container">
+  <div class="timer-display">
+    <span class="time">{{ minutes }}</span
+    >:
+    <span class="time">{{ seconds }}</span>
+  </div>
+  <div class="timer-buttons">
+    <button class="btn start" (click)="startTimer()">Start</button>
+    <button class="btn stop" (click)="stopTimer()">Stop</button>
+    <button class="btn reset" (click)="resetTimer()">Reset</button>
+  </div>
+</div>
