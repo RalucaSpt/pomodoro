@@ -5,6 +5,6 @@
     <input name="2" type="number" class="session-duration" [(ngModel)]="sessionDurationInputValue" placeholder="25" />
     <label for="break-duration">Break duration:</label>
     <input name="3" type="number" class="break-duration" [(ngModel)]="breakDurationInputValue" placeholder="5" />
-    <button mat-flat-button type="button" class="confirm-button" (click)="confirmSettings()" [disabled]="isRunning()">Confirm</button>
+    <button type="button" class="confirm-button" (click)="confirmSettings()" [disabled]="isRunning()">Confirm</button>
     <p>{{inputWarning()}}</p>
 </form>

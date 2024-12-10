@@ -1,13 +1,11 @@
 import { Component, inject, signal } from '@angular/core';
 import { TimerService } from '../timer/timer-service/timer-service.component';
-import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import {MatButtonModule } from '@angular/material/button';
 import {DEFAULT_SESSION_NUMBER, DEFAULT_SESSION_TIME, DEFAULT_BREAK_TIME} from '../timer/time.model';
 
 @Component({
   selector: 'app-config',
-  imports: [FormsModule, MatButtonModule, CommonModule],
+  imports: [FormsModule],
   templateUrl: './config.component.html',
   styleUrl: './config.component.css',
 })
