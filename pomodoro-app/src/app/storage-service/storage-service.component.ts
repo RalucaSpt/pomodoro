@@ -1,33 +1,44 @@
-import { Component, Injectable } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 
-@Component({
-  selector: 'app-storage-service',
-  imports: [],
-  templateUrl: './storage-service.component.html',
-  styleUrl: './storage-service.component.css',
-})
 @Injectable({ providedIn: 'root' })
-export class StorageServiceComponent {
+export class StorageService {
   private storageKey = 'pomodoro-timer';
 
-  saveTimerData(minutes: number, seconds: number): void {
-    const timerData = {
-      minutes,
-      seconds,
-      date: new Date().toLocaleDateString(),
-    };
+  timeSpentLearningEachDayThisWeek = signal([0, 0, 0, 0, 0, 0, 0]);
 
-    let storedData = this.loadTimerData();
-    if (storedData) {
-      storedData.push(timerData);
-    } else {
-      storedData = [timerData];
-    }
-
-    localStorage.setItem(this.storageKey, JSON.stringify(storedData));
+  constructor() {
+    this.initStorage();
+    this.updateSignal();
   }
 
-  loadTimerData(): { minutes: number; seconds: number; date: string }[] | null {
+  private initStorage() {
+    if (this.loadTimerData() === null) {
+      let storedData = {
+        lastUpdated: new Date().getTime(),
+        minutesEachDay: [0, 0, 0, 0, 0, 0, 0],
+      };
+
+      localStorage.setItem(this.storageKey, JSON.stringify(storedData));
+    }
+  }
+
+  saveTimerData(minutes: number): void {
+   const storedData = this.loadTimerData();
+   const dayIndex = new Date().getDay();
+   const currentTime = new Date().getTime();
+
+   if(currentTime - storedData.lastUpdated > 86400000) {
+     storedData.minutesEachDay = [0, 0, 0, 0, 0, 0, 0];
+     storedData.lastUpdated = currentTime;
+   }
+
+    storedData.minutesEachDay[dayIndex-1] += minutes;
+
+    localStorage.setItem(this.storageKey, JSON.stringify(storedData));
+    this.updateSignal();
+  }
+
+  loadTimerData(): any {
     const storedData = localStorage.getItem(this.storageKey);
     return storedData ? JSON.parse(storedData) : null;
   }
@@ -36,16 +47,8 @@ export class StorageServiceComponent {
     localStorage.removeItem(this.storageKey);
   }
 
-  getTotalTimeForToday(): number {
+  updateSignal(): void {
     const storedData = this.loadTimerData();
-    const today = new Date().toLocaleDateString();
-    if (storedData) {
-      const todayData = storedData.filter((item) => item.date === today);
-      return todayData.reduce(
-        (total, item) => total + item.minutes * 60 + item.seconds,
-        0
-      );
-    }
-    return 0;
+    this.timeSpentLearningEachDayThisWeek.set(storedData.minutesEachDay);
   }
-}
+} 

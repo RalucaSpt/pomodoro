@@ -1,8 +1,10 @@
 <form>
     <label for="sesion-number">Session number:</label>
-    <input type="number" class="sesion-number" />
+    <input name="1" type="number" class="sesion-number" [(ngModel)]="sessionNumberInputValue"  placeholder="4"/>
     <label for="session-duration">Session duration:</label>
-    <input type="number" class="session-duration" />
+    <input name="2" type="number" class="session-duration" [(ngModel)]="sessionDurationInputValue" placeholder="25" />
     <label for="break-duration">Break duration:</label>
-    <input type="number" class="break-duration" />
+    <input name="3" type="number" class="break-duration" [(ngModel)]="breakDurationInputValue" placeholder="5" />
+    <button mat-flat-button type="button" class="confirm-button" (click)="confirmSettings()" [disabled]="isRunning()">Confirm</button>
+    <p>{{inputWarning()}}</p>
 </form>

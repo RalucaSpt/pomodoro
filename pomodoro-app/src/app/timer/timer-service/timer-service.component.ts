@@ -1,25 +1,35 @@
-import { Injectable, signal } from '@angular/core';
+import { inject, Injectable, signal } from '@angular/core';
 import { Time } from '../time.model';
+import {
+  DEFAULT_SESSION_TIME,
+  DEFAULT_BREAK_TIME,
+  DEFAULT_SESSION_NUMBER,
+} from '../time.model';
+import { StorageService } from '../../storage-service/storage-service.component';
 
 @Injectable({
   providedIn: 'root',
 })
 export class TimerService {
-  timeLeft!: number;
+  sessionNumber = signal(DEFAULT_SESSION_NUMBER);
+  sessionTime: number = DEFAULT_SESSION_TIME;
+  breakTime: number = DEFAULT_BREAK_TIME;
+  timeLeft = this.sessionTime * 60;
 
-  sessionNumber!: number;
-  sessionTime!: number;
-  breakTime!: number;
+  currentTime = signal<Time>({ minutes: this.sessionTime, seconds: 0 });
 
-  currentTime = signal<Time>({ minutes: 0, seconds: 0 });
   isBreakTime = signal(false);
+  isRunning = signal(false);
 
   private intervalId: any;
-  private isRunning = signal(false);
+  private storageService = inject(StorageService);
+  
 
   startTimer(): void {
     if (this.isRunning()) return;
     this.isRunning.set(true);
+
+    if (this.sessionNumber() === 0) this.sessionNumber.set(1);
 
     this.intervalId = setInterval(() => {
       if (this.timeLeft <= 0) {
@@ -28,6 +38,7 @@ export class TimerService {
       }
 
       this.timeLeft -= 1;
+
       this.currentTime.set({
         minutes: Math.floor(this.timeLeft / 60),
         seconds: this.timeLeft % 60,
@@ -47,10 +58,14 @@ export class TimerService {
 
     if (this.isBreakTime()) {
       this.timeLeft = this.breakTime * 60;
-      return;
+    } else {
+      this.timeLeft = this.sessionTime * 60;
     }
 
-    this.timeLeft = this.sessionTime * 60;
+    this.currentTime.set({
+      minutes: Math.floor(this.timeLeft / 60),
+      seconds: this.timeLeft % 60,
+    });
   }
 
   isTimerRunning(): boolean {
@@ -58,21 +73,37 @@ export class TimerService {
   }
 
   private scheduleNextPomodoroPhase(): void {
-    if (this.sessionNumber === 0) {
+    if (this.sessionNumber() === 0) {
       this.resetTimer();
+      return;
     }
 
     if (!this.isBreakTime()) {
       // It's not the final session, so we need to start a break
-      if (this.sessionNumber > 1) {
+      if (this.sessionNumber() > 1) {
         this.isBreakTime.set(true);
         this.timeLeft = this.breakTime * 60;
       }
 
-      this.sessionNumber -= 1;
+      this.sessionNumber.set(this.sessionNumber() - 1);
+      this.storageService.saveTimerData(this.sessionTime);
     } else {
       this.isBreakTime.set(false);
       this.timeLeft = this.sessionTime * 60;
     }
+  }
+
+  updateSettings(sessionNumber: number, sessionTime: number, breakTime: number): void {
+    this.sessionNumber.set(sessionNumber);
+    this.sessionTime = sessionTime;
+    this.breakTime = breakTime;
+    this.timeLeft = sessionTime * 60;
+
+    this.currentTime.set({
+      minutes: sessionTime,
+      seconds: 0,
+    });
+
+    this.isBreakTime.set(false);
   }
 }

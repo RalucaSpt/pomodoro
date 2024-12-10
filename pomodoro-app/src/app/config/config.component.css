@@ -36,21 +36,8 @@ form input[type="number"]:focus {
     outline: none;
 }
 
-/* Button styling (if needed in the future) */
-form button {
-    width: 100%;
-    padding: 10px;
-    font-size: 16px;
-    color: #fff;
-    background-color: #007bff;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-form button:hover {
-    background-color: #0056b3;
+p {
+    color:red;
 }
 
 /* Responsive design */

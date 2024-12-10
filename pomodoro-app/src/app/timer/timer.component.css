@@ -55,4 +55,18 @@
   .btn.reset:hover {
     background-color: #e0a800;
   }
+
+  .timer-buttons{
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .focus {
+    color: darkred;
+  }
+
+  .break {
+    color: darkblue;
+  }
   
