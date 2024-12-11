@@ -1,5 +1,5 @@
 import { Component, inject, signal } from '@angular/core';
-import { TimerService } from '../timer/timer-service/timer-service.component';
+import { TimerService } from '../timer/timer.service';
 import { FormsModule } from '@angular/forms';
 import {DEFAULT_SESSION_NUMBER, DEFAULT_SESSION_TIME, DEFAULT_BREAK_TIME} from '../timer/time.model';
 

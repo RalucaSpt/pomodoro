@@ -1,11 +1,11 @@
 import { inject, Injectable, signal } from '@angular/core';
-import { Time } from '../time.model';
+import { Time } from './time.model';
 import {
   DEFAULT_SESSION_TIME,
   DEFAULT_BREAK_TIME,
   DEFAULT_SESSION_NUMBER,
-} from '../time.model';
-import { StorageService } from '../../storage-service/storage-service.component';
+} from './time.model';
+import { StorageService } from '../storage.service';
 
 @Injectable({
   providedIn: 'root',

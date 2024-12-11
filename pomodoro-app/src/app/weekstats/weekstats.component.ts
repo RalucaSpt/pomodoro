@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { StorageService } from '../storage-service/storage-service.component';
+import { StorageService } from '../storage.service';
 import { CommonModule } from '@angular/common';
 import {MatCardModule} from '@angular/material/card';
 
