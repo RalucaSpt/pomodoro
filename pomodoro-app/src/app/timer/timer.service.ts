@@ -43,7 +43,7 @@ export class TimerService {
         minutes: Math.floor(this.timeLeft / 60),
         seconds: this.timeLeft % 60,
       });
-    }, 1000);
+    }, 100);
   }
 
   stopTimer(): void {

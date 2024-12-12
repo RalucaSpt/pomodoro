@@ -1,10 +1,20 @@
 import { Injectable, signal } from '@angular/core';
+import { Week } from './weekstats/week.model';
+import { indexToDay } from './weekstats/week.model';
 
 @Injectable({ providedIn: 'root' })
 export class StorageService {
   private storageKey = 'pomodoro-timer';
 
-  timeSpentLearningEachDayThisWeek = signal([0, 0, 0, 0, 0, 0, 0]);
+  timeSpentLearningEachDayThisWeek = signal<Week>({
+    monday: 0,
+    tuesday: 0,
+    wednesday: 0,
+    thursday: 0,
+    friday: 0,
+    saturday: 0,
+    sunday: 0,
+    });
 
   constructor() {
     this.initStorage();
@@ -15,7 +25,7 @@ export class StorageService {
     if (this.loadTimerData() === null) {
       let storedData = {
         lastUpdated: new Date().getTime(),
-        minutesEachDay: [0, 0, 0, 0, 0, 0, 0],
+        minutesEachDay: this.createEmptyWeek(),
       };
 
       localStorage.setItem(this.storageKey, JSON.stringify(storedData));
@@ -24,15 +34,17 @@ export class StorageService {
 
   saveTimerData(minutes: number): void {
    const storedData = this.loadTimerData();
-   const dayIndex = new Date().getDay();
+   const dayIndex: number = new Date().getDay();
    const currentTime = new Date().getTime();
 
    if(currentTime - storedData.lastUpdated > 86400000) {
-     storedData.minutesEachDay = [0, 0, 0, 0, 0, 0, 0];
+     storedData.minutesEachDay = this.createEmptyWeek();
      storedData.lastUpdated = currentTime;
    }
 
-    storedData.minutesEachDay[dayIndex-1] += minutes;
+    const day = indexToDay[dayIndex].toLowerCase();
+
+    storedData.minutesEachDay[day] += minutes;
 
     localStorage.setItem(this.storageKey, JSON.stringify(storedData));
     this.updateSignal();
@@ -51,4 +63,17 @@ export class StorageService {
     const storedData = this.loadTimerData();
     this.timeSpentLearningEachDayThisWeek.set(storedData.minutesEachDay);
   }
+
+  createEmptyWeek(): Week {
+    return {
+      monday: 0,
+      tuesday: 0,
+      wednesday: 0,
+      thursday: 0,
+      friday: 0,
+      saturday: 0,
+      sunday: 0,
+    };
+  }
 } 
+
