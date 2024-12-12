@@ -24,6 +24,17 @@ export class TimerService {
   private intervalId: any;
   private storageService = inject(StorageService);
   
+  updateStats(timeLeft: number): void {
+    if(this.isBreakTime())
+      return;
+
+    if(this.timeLeft === this.sessionTime * 60)
+      return;
+
+    if(this.timeLeft % 60 === 0) {
+      this.storageService.saveTimerData();
+    }
+  }
 
   startTimer(): void {
     if (this.isRunning()) return;
@@ -32,6 +43,8 @@ export class TimerService {
     if (this.sessionNumber() === 0) this.sessionNumber.set(1);
 
     this.intervalId = setInterval(() => {
+      this.updateStats(this.timeLeft);
+
       if (this.timeLeft <= 0) {
         this.scheduleNextPomodoroPhase();
         return;
@@ -86,7 +99,6 @@ export class TimerService {
       }
 
       this.sessionNumber.set(this.sessionNumber() - 1);
-      this.storageService.saveTimerData(this.sessionTime);
     } else {
       this.isBreakTime.set(false);
       this.timeLeft = this.sessionTime * 60;

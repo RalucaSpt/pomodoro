@@ -32,7 +32,7 @@ export class StorageService {
     }
   }
 
-  saveTimerData(minutes: number): void {
+  saveTimerData(): void {
    const storedData = this.loadTimerData();
    const dayIndex: number = new Date().getDay();
    const currentTime = new Date().getTime();
@@ -44,7 +44,7 @@ export class StorageService {
 
     const day = indexToDay[dayIndex].toLowerCase();
 
-    storedData.minutesEachDay[day] += minutes;
+    storedData.minutesEachDay[day] += 1;
 
     localStorage.setItem(this.storageKey, JSON.stringify(storedData));
     this.updateSignal();
