@@ -12,4 +12,13 @@ import {MatCardModule} from '@angular/material/card';
 export class WeekstatsComponent {
   private storageService = inject(StorageService);
   timeSpentLearningEachDayThisWeek = this.storageService.timeSpentLearningEachDayThisWeek;
+  
+  transform(value: number): string {
+    if(value > 0 && value/60 < 1) {
+      return value + ' min';
+
+    } else {
+      return value/60 + ' h';
+    }
+ }
 }
