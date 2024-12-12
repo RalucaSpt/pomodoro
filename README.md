@@ -36,14 +36,6 @@ Responsible for saving and retrieving time tracking data.
 - **`clearTimerData()`**: Clears all stored data.
 - **`updateSignal()`**: Updates the reactive signal for weekly data.
 
-#### Data Format
-```typescript
-{
-  lastUpdated: number; // Timestamp of the last update
-  minutesEachDay: Week; // Tracks minutes for each day of the week
-}
-```
-
 
 # Signals and Components Overview
 
