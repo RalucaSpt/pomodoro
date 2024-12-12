@@ -12,6 +12,7 @@ import { StorageService } from '../storage.service';
 })
 export class TimerService {
   sessionNumber = signal(DEFAULT_SESSION_NUMBER);
+  currentSessionNumber = signal(DEFAULT_SESSION_NUMBER);
   sessionTime: number = DEFAULT_SESSION_TIME;
   breakTime: number = DEFAULT_BREAK_TIME;
   timeLeft = this.sessionTime * 60;
@@ -40,7 +41,7 @@ export class TimerService {
     if (this.isRunning()) return;
     this.isRunning.set(true);
 
-    if (this.sessionNumber() === 0) this.sessionNumber.set(1);
+    if (this.currentSessionNumber() === 0) this.currentSessionNumber.set(this.sessionNumber());
 
     this.intervalId = setInterval(() => {
       this.updateStats(this.timeLeft);
@@ -86,19 +87,19 @@ export class TimerService {
   }
 
   private scheduleNextPomodoroPhase(): void {
-    if (this.sessionNumber() === 0) {
+    if (this.currentSessionNumber() === 0) {
       this.resetTimer();
       return;
     }
 
     if (!this.isBreakTime()) {
       // It's not the final session, so we need to start a break
-      if (this.sessionNumber() > 1) {
+      if (this.currentSessionNumber() > 1) {
         this.isBreakTime.set(true);
         this.timeLeft = this.breakTime * 60;
       }
 
-      this.sessionNumber.set(this.sessionNumber() - 1);
+      this.currentSessionNumber.set(this.currentSessionNumber() - 1);
     } else {
       this.isBreakTime.set(false);
       this.timeLeft = this.sessionTime * 60;
@@ -106,7 +107,7 @@ export class TimerService {
   }
 
   updateSettings(sessionNumber: number, sessionTime: number, breakTime: number): void {
-    this.sessionNumber.set(sessionNumber);
+    this.currentSessionNumber.set(sessionNumber);
     this.sessionTime = sessionTime;
     this.breakTime = breakTime;
     this.timeLeft = sessionTime * 60;
@@ -117,5 +118,7 @@ export class TimerService {
     });
 
     this.isBreakTime.set(false);
+
+    this.sessionNumber.set(sessionNumber);
   }
 }

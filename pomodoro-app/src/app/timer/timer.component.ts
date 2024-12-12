@@ -13,7 +13,7 @@ export class TimerComponent {
   private timerService = inject(TimerService);
 
   currentTime = this.timerService.currentTime;
-  sessionNumber = this.timerService.sessionNumber;
+  sessionNumber = this.timerService.currentSessionNumber;
   isBreakTime = this.timerService.isBreakTime;
 
   startTimer(): void {
